@@ -1,0 +1,18 @@
+
+.error {
+    color: red;
+    margin: 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.loader {
+    display: block;
+    text-align: center;
+}
