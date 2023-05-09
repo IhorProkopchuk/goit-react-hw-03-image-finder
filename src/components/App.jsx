@@ -1,11 +1,9 @@
 import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { fetchImages } from '../api/fetchImage';
-import { imagesPerPage } from '../api/fetchImage';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
-
 import { Loader } from '../components/Loader/Loader';
 
 import styles from './App.module.css';
@@ -17,8 +15,7 @@ export class App extends Component {
     error: null,
     isLoading: false,
     page: 1,
-    totalHits: null,
-    totalImg: 0,
+    totalHits: 0,
     showModal: false,
     activeImg: null,
   };
@@ -39,7 +36,6 @@ export class App extends Component {
       page: 1,
       images: [],
       error: null,
-      totalImg: 0,
     });
   };
 
@@ -47,17 +43,11 @@ export class App extends Component {
     try {
       this.setState({ isLoading: true });
       const imgPixabay = await fetchImages(query, page);
-      const totalImage = imagesPerPage;
 
       if (imgPixabay.totalHits > 0) {
         this.setState(({ images, page }) => ({
           images: [...images, ...imgPixabay.hits],
           totalHits: imgPixabay.totalHits,
-          totalImg: totalImage,
-          error:
-            totalImage >= imgPixabay.totalHits
-              ? 'End of searched results'
-              : null,
         }));
       } else {
         this.setState({
@@ -85,16 +75,15 @@ export class App extends Component {
   nextPage = () => {
     this.setState(prevState => ({
       page: prevState.page + 1,
-      isLoadingMore: true,
     }));
-  };
-
-  closeModal = () => {
-    this.setState({ showModal: false });
   };
 
   openModal = () => {
     this.setState({ showModal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ showModal: false });
   };
 
   handleImgClick = activeImg => {
@@ -107,26 +96,20 @@ export class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.onSubmit} />
-
-        <div className={styles.loader}>{isLoading && <Loader />}</div>
-        <div id="modal">
-          {showModal && (
-            <Modal activeImg={activeImg} closeModal={this.closeModal}></Modal>
+        {isLoading && <Loader className={styles.loader} />}
+        {showModal && (
+          <Modal activeImg={activeImg} closeModal={this.closeModal} />
+        )}
+        {error && <div className={styles.error}>{error}</div>}
+        {images && (
+          <ImageGallery handleImgClick={this.handleImgClick} images={images} />
+        )}
+        {!isLoading &&
+          !error &&
+          images &&
+          this.state.totalHits > images.length && (
+            <Button nextPage={this.nextPage} />
           )}
-          {error && <div className={styles.error}>{error}</div>}
-          {images && (
-            <ImageGallery
-              handleImgClick={this.handleImgClick}
-              images={images}
-            />
-          )}
-          {!isLoading &&
-            !error &&
-            images &&
-            this.state.totalHits > images.length && (
-              <Button nextPage={this.nextPage} />
-            )}
-        </div>
       </>
     );
   }
