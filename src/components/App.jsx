@@ -39,26 +39,27 @@ export class App extends Component {
     });
   };
 
-  fetchImages = async (query, page) => {
-    try {
-      this.setState({ isLoading: true });
-      const imgPixabay = await fetchImages(query, page);
-
-      if (imgPixabay.totalHits > 0) {
-        this.setState(({ images, page }) => ({
-          images: [...images, ...imgPixabay.hits],
-          totalHits: imgPixabay.totalHits,
-        }));
-      } else {
-        this.setState({
-          error: 'No images matching your search query',
-        });
-      }
-    } catch {
-      this.setState({ error: 'No pictures were founded' });
-    } finally {
-      this.setState({ isLoading: false });
-    }
+  fetchImages = (query, page) => {
+    this.setState({ isLoading: true });
+    fetchImages(query, page)
+      .then(imgPixabay => {
+        if (imgPixabay.totalHits > 0) {
+          this.setState(({ images, page }) => ({
+            images: [...images, ...imgPixabay.hits],
+            totalHits: imgPixabay.totalHits,
+          }));
+        } else {
+          this.setState({
+            error: 'No images matching your search query',
+          });
+        }
+      })
+      .catch(() => {
+        this.setState({ error: 'No pictures were founded' });
+      })
+      .finally(() => {
+        this.setState({ isLoading: false });
+      });
   };
 
   onSubmit = event => {
