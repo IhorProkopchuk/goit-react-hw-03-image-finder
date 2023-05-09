@@ -20,14 +20,14 @@ export class App extends Component {
     activeImg: null,
   };
 
-  async componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const { query, page } = this.state;
 
     if (prevState.query !== query) {
       this.resetState();
-      await this.fetchImages(query, 1);
+      this.fetchImages(query, 1);
     } else if (prevState.page !== page && page !== 1) {
-      await this.fetchImages(query, page);
+      this.fetchImages(query, page);
     }
   }
 
@@ -56,8 +56,9 @@ export class App extends Component {
       }
     } catch {
       this.setState({ error: 'No pictures were founded' });
+    } finally {
+      this.setState({ isLoading: false });
     }
-    this.setState({ isLoading: false });
   };
 
   onSubmit = event => {
