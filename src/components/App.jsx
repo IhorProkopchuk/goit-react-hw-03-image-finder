@@ -20,7 +20,7 @@ export class App extends Component {
     totalHits: null,
     totalImg: 0,
     showModal: false,
-    activeImg: null,
+    // activeImg: null,
   };
 
   async componentDidUpdate(prevProps, prevState) {
