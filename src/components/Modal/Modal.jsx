@@ -16,10 +16,14 @@ export const Modal = ({ activeImg, closeModal }) => {
     };
   }, [closeModal]);
 
+  const handleImageClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className={styles.overlay} onClick={closeModal}>
       <div className={styles.modal}>
-        <img src={activeImg.largeImageURL} alt={activeImg.tags} />
+        <img src={activeImg.largeImageURL} alt={activeImg.tags} onClick={handleImageClick}/>
       </div>
     </div>
   );
